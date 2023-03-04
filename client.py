@@ -8,7 +8,7 @@ estado, recompensa = cn.get_state_reward(state, acao)
 
 # Lendo o documento txt em formato de array
 # com cada linha ocupando uma posição
-f = open('resultado.txt', 'w')
+f = open('resultado.txt', 'r')
 linhas = f.readlines()
 print(linhas[0])
 
@@ -18,7 +18,5 @@ direcao = int(estado[7:], 2)
 print(int(estado[2:7], 2), direcao)
 
 # posicao = (int(estado[2:7], 2)-1)*4 + direcao
-
-
 
 f.close()
