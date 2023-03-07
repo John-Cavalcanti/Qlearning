@@ -8,7 +8,7 @@ state = cn.connect(2037)
 ALPHA = 0.5
 GAMMA = 0.9
 EPSILON = 0.1
-NUM_EPISODES = 5
+NUM_EPISODES = 20
 
 # Define as ações possíveis
 actions = ['left', 'jump', 'right']
@@ -18,6 +18,7 @@ for i in range(NUM_EPISODES):
     acao = "jump"
     estado, recompensa = cn.get_state_reward(state, acao)
 
+    print("Recompensa : ",recompensa)
     while recompensa != -1:
         # calculo da linha do arquivo resultado.txt a ser modificada
         posicao = int(estado[2:7], 2)*4 + int(estado[7:], 2) 
@@ -30,14 +31,22 @@ for i in range(NUM_EPISODES):
 
         # armazenando linha selecionada e recebendo valores separadamente
         linha = resultados[posicao]
-        numeros = linha.split(" ")
+        numeros_string = linha.split(" ")
+        numeros = []
+
+        for x in numeros_string:
+            numeros.append(float(x))
+
+
+        print("list numeros : ",numeros)
+        print("Tipos \nnumeros[0] ",type(numeros[0]),"\nnumeros[1] ",type(numeros[1]),"\nnumeros[2] ",type(numeros[2]))
 
         # Escolhe a ação a ser tomada usando a política epsilon-greedy
-        if random.uniform(0, 0.1) < EPSILON:
+        if random.uniform(0, 1) < EPSILON:
             acao = random.choice(actions)
         else:
-            ###??? Pegar o máximo valor da tabela q_table
-            valor = numeros.index(max(float(numeros[0]), float(numeros[1]), float(numeros[2])))
+            ### Pegar o máximo valor da tabela q_table
+            valor = numeros.index(max(numeros[0], numeros[1], numeros[2]))
             acao = actions[valor]
         
          # Executa a ação e recebe o novo estado e a recompensa
@@ -48,14 +57,14 @@ for i in range(NUM_EPISODES):
 
         # substituindo o valor de acordo com a ação correspodente
         if acao == "left":
-            novo_valor = ALPHA * (recompensa + GAMMA * max(float(numeros[0]), float(numeros[1]), float(numeros[2])) - float(numeros[0]))
-            atual = str(float(novo_valor) + float(numeros[0])) + " " + numeros[1] + " " + numeros[2]
+            novo_valor = ALPHA * (recompensa + GAMMA * max(float(numeros_string[0]), float(numeros_string[1]), float(numeros_string[2])) - float(numeros_string[0]))
+            atual = str(float(novo_valor) + float(numeros_string[0])) + " " + numeros_string[1] + " " + numeros_string[2]
         elif acao == "jump":
-            novo_valor = ALPHA * (recompensa + GAMMA * max(float(numeros[0]), float(numeros[1]), float(numeros[2])) - float(numeros[1]))
-            atual = numeros[0] + " " + str(float(novo_valor) + float(numeros[1])) + " " + numeros[2]
+            novo_valor = ALPHA * (recompensa + GAMMA * max(float(numeros_string[0]), float(numeros_string[1]), float(numeros_string[2])) - float(numeros_string[1]))
+            atual = numeros_string[0] + " " + str(float(novo_valor) + float(numeros_string[1])) + " " + numeros_string[2]
         elif acao == "right":
-            novo_valor = ALPHA * (recompensa + GAMMA * max(float(numeros[0]), float(numeros[1]), float(numeros[2])) - float(numeros[2]))
-            atual = numeros[0]+ " " + numeros[1] + " " + str(float(novo_valor) + float(numeros[2])) + "\n"
+            novo_valor = ALPHA * (recompensa + GAMMA * max(float(numeros_string[0]), float(numeros_string[1]), float(numeros_string[2])) - float(numeros_string[2]))
+            atual = numeros_string[0]+ " " + numeros_string[1] + " " + str(float(novo_valor) + float(numeros_string[2])) + "\n"
             atual = atual.replace(r"\n", "\n")
 
         # reescrevendo a linha selecionada
